@@ -3,7 +3,6 @@ from flask import Flask, request, jsonify, send_from_directory
 import requests
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
-import logging
 from datetime import datetime
 from dotenv import load_dotenv
 from marshmallow import Schema, fields, ValidationError
@@ -14,14 +13,6 @@ load_dotenv()
 
 app = Flask(__name__, static_folder='frontend', static_url_path='')
 limiter = Limiter(key_func=get_remote_address, app=app)  # Apply rate limiting
-
-# Configure custom logging
-logger = logging.getLogger('custom_logger')
-logger.setLevel(logging.INFO)
-file_handler = logging.FileHandler('log.txt')
-formatter = logging.Formatter('%(message)s')
-file_handler.setFormatter(formatter)
-logger.addHandler(file_handler)
 
 # Telegram bot setup
 telegram_token = os.getenv("TELEGRAM_TOKEN")
@@ -107,7 +98,6 @@ def send_text():
         return jsonify(response_data), 200
 
     except requests.exceptions.RequestException as e:
-        logger.error(f"API Request Failed: {e}")
         return jsonify({"error": "Failed to communicate with the API"}), 500
 
 if __name__ == '__main__':

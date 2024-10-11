@@ -17,6 +17,10 @@ limiter = Limiter(key_func=get_remote_address, app=app)  # Apply rate limiting
 # Telegram bot setup
 telegram_token = os.getenv("TELEGRAM_TOKEN")
 telegram_chat_id = os.getenv("TELEGRAM_CHAT_ID")
+
+if not telegram_token or not telegram_chat_id:
+    raise ValueError("TELEGRAM_TOKEN and TELEGRAM_CHAT_ID must be set in the environment variables")
+
 bot = Bot(token=telegram_token)
 
 # Input validation schema

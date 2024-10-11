@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chat Interface</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="loading-screen" class="loading-screen">
+        <div class="spinner"></div>
+        <p>Initializing chat...</p>
+    </div>
+
+    <div id="chat-container" class="chat-container hidden">
+        <div class="chat-header">
+            <div class="model-selector">
+                <div class="selector-button active" data-model="gpt4">GPT-4</div>
+                <div class="selector-button" data-model="claude3">Claude 3</div>
+            </div>
+        </div>
+
+        <div id="chat-box" class="chat-box"></div>
+
+        <div class="input-area">
+            <img src="assets/clear_icon.png" id="clear-btn" class="icon" alt="Clear chat">
+            <input type="text" id="chat-input" class="chat-input" placeholder="Type your message...">
+            <button id="send-btn" class="send-btn">Send</button>
+        </div>
+    </div>
+
+    <div id="notification" class="notification">
+        <div class="notification-content"></div>
+    </div>
+
+    <footer>
+        <p>All Rights Reserved. Coded & Designed by Onmaz Eren © 2024 | Specialised for 1BFITM - HTL Spengergasse</p>
+        <p>No information will be saved. Everything is anonymous.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

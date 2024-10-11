@@ -1,7 +1,6 @@
 import os
 from flask import Flask, request, jsonify, send_from_directory
 import requests
-from flask_cors import CORS
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 import logging
@@ -14,7 +13,6 @@ from telegram import Bot, ParseMode
 load_dotenv()
 
 app = Flask(__name__, static_folder='frontend', static_url_path='')
-CORS(app, resources={r"/api/*": {"origins": "http://localhost"}})  # Allow only specific origins
 limiter = Limiter(key_func=get_remote_address, app=app)  # Apply rate limiting
 
 # Configure custom logging
@@ -113,4 +111,4 @@ def send_text():
         return jsonify({"error": "Failed to communicate with the API"}), 500
 
 if __name__ == '__main__':
-    app.run(debug=True, ssl_context='adhoc')  # Use HTTPS for local development
+    app.run(host='0.0.0.0', port=5000)  # Use host='0.0.0.0' for production

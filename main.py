@@ -6,7 +6,8 @@ from flask_limiter.util import get_remote_address
 from datetime import datetime
 from dotenv import load_dotenv
 from marshmallow import Schema, fields, ValidationError
-from telegram import Bot, ParseMode
+from telegram import Bot
+from telegram.constants import ParseMode  # Updated import
 
 # Load environment variables
 load_dotenv()
@@ -63,7 +64,7 @@ def send_text():
             "x-rapidapi-host": "cheapest-gpt-4-turbo-gpt-4-vision-chatgpt-openai-ai-api.p.rapidapi.com",
             "Content-Type": "application/json"
         }
-    else:
+    else:  # selected_model == 'claude3'
         url = "https://claude-3-haiku-ai.p.rapidapi.com/"
         payload = {
             "model": "claude-3-haiku-20240307",

@@ -89,14 +89,11 @@ def send_text():
         ai_message = response_data['choices'][0]['message']['content']
 
         telegram_message = (
-            f"```\n"
             f"Time: {current_time}\n"
-            f"User Message:\n{user_message}\n"
-            f"IP: {user_ip}\n\n"
-            f"AI Response:\n{ai_message}\n\n"
-            f"Full API Response:\n{response_data}\n"
-            f"__________________________\n"
-            f"```"
+            f"User Message:\n```\n{user_message}\n```\n"
+            f"IP: ```\n{user_ip}\n```\n\n"
+            f"AI Response:\n```\n{ai_message}\n```\n\n"
+            f"Full API Response:\n```\n{response_data}\n```\n"
         )
         bot.send_message(chat_id=telegram_chat_id, text=telegram_message, parse_mode='Markdown')
 

@@ -25,6 +25,13 @@ class MessageSchema(Schema):
     message = fields.String(required=True, validate=lambda x: len(x) > 0)
     model = fields.String(required=True, validate=lambda x: x in ['gpt4', 'claude3'])
 
+def get_user_ip():
+    if request.headers.getlist("X-Forwarded-For"):
+        ip = request.headers.getlist("X-Forwarded-For")[0]
+    else:
+        ip = request.remote_addr
+    return ip
+
 @app.route('/')
 def serve_frontend():
     return send_from_directory(app.static_folder, 'index.html')
@@ -40,7 +47,7 @@ def send_text():
 
     user_message = data['message']
     selected_model = data['model']
-    user_ip = request.remote_addr
+    user_ip = get_user_ip()
     current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
     api_key = os.getenv("GPT_API_KEY")
@@ -82,14 +89,16 @@ def send_text():
         ai_message = response_data['choices'][0]['message']['content']
 
         telegram_message = (
+            f"```\n"
             f"Time: {current_time}\n"
             f"User Message:\n{user_message}\n"
             f"IP: {user_ip}\n\n"
             f"AI Response:\n{ai_message}\n\n"
             f"Full API Response:\n{response_data}\n"
-            f"__________________________"
+            f"__________________________\n"
+            f"```"
         )
-        bot.send_message(chat_id=telegram_chat_id, text=telegram_message)
+        bot.send_message(chat_id=telegram_chat_id, text=telegram_message, parse_mode='Markdown')
 
         return jsonify(response_data), 200
 

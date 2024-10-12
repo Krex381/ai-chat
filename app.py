@@ -6,34 +6,31 @@ from flask_limiter.util import get_remote_address
 from datetime import datetime
 from dotenv import load_dotenv
 from marshmallow import Schema, fields, ValidationError
-from telegram import Bot, ParseMode
+from telegram import Bot
 from flask_cors import CORS
 
 # Load environment variables
 load_dotenv()
 
 app = Flask(__name__, static_folder='frontend', static_url_path='')
-CORS(app)  # Enable CORS for all routes
-limiter = Limiter(key_func=get_remote_address, app=app)  # Apply rate limiting
+CORS(app)
+limiter = Limiter(key_func=get_remote_address, app=app)
 
 # Telegram bot setup
 telegram_token = os.getenv("TELEGRAM_TOKEN")
 telegram_chat_id = os.getenv("TELEGRAM_CHAT_ID")
 bot = Bot(token=telegram_token)
 
-# Input validation schema
 class MessageSchema(Schema):
     message = fields.String(required=True, validate=lambda x: len(x) > 0)
     model = fields.String(required=True, validate=lambda x: x in ['gpt4', 'claude3'])
 
-# Serve the frontend
 @app.route('/')
 def serve_frontend():
     return send_from_directory(app.static_folder, 'index.html')
 
-# API endpoint to send text
 @app.route('/api/send_text', methods=['POST'])
-@limiter.limit("5 per minute")  # Limit to 5 requests per minute per IP
+@limiter.limit("5 per minute")
 def send_text():
     schema = MessageSchema()
     try:
@@ -41,14 +38,13 @@ def send_text():
     except ValidationError as err:
         return jsonify({"error": err.messages}), 400
 
-    user_message = data.get('message')
-    selected_model = data.get('model')
+    user_message = data['message']
+    selected_model = data['model']
     user_ip = request.remote_addr
     current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
-    # API Request to GPT-4 or Claude 3
-    api_key = os.getenv("GPT_API_KEY")  # Use environment variable for security
-    api_key_claude = os.getenv("CLAUDE_API_KEY")  # Use environment variable for security
+    api_key = os.getenv("GPT_API_KEY")
+    api_key_claude = os.getenv("CLAUDE_API_KEY")
 
     if not api_key or not api_key_claude:
         return jsonify({"error": "API keys not configured"}), 500
@@ -80,22 +76,20 @@ def send_text():
 
     try:
         response = requests.post(url, json=payload, headers=headers, timeout=10)
-        response.raise_for_status()  # Raise error for bad HTTP status
+        response.raise_for_status()
         response_data = response.json()
 
-        # Extract the first AI message response
         ai_message = response_data['choices'][0]['message']['content']
 
-        # Send message to Telegram bot
         telegram_message = (
-            f"*Time:* `{current_time}`\n"
-            f"*User Message:*\n```\n{user_message}\n```\n"
-            f"*IP:* `{user_ip}`\n\n"
-            f"*AI Response:*\n```\n{ai_message}\n```\n\n"
-            f"*Full API Response:*\n```\n{response_data}\n```\n"
+            f"Time: {current_time}\n"
+            f"User Message:\n{user_message}\n"
+            f"IP: {user_ip}\n\n"
+            f"AI Response:\n{ai_message}\n\n"
+            f"Full API Response:\n{response_data}\n"
             f"__________________________"
         )
-        bot.send_message(chat_id=telegram_chat_id, text=telegram_message, parse_mode=ParseMode.MARKDOWN)
+        bot.send_message(chat_id=telegram_chat_id, text=telegram_message)
 
         return jsonify(response_data), 200
 
@@ -103,4 +97,4 @@ def send_text():
         return jsonify({"error": "Failed to communicate with the API"}), 500
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8080)  # Use host='0.0.0.0' for production and port 8080
+    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 8080)))

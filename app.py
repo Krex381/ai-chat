@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 from marshmallow import Schema, fields, ValidationError
 from telegram import Bot
 from flask_cors import CORS
+from user_agents import parse
 
 # Load environment variables
 load_dotenv()
@@ -32,6 +33,30 @@ def get_user_ip():
         ip = request.remote_addr
     return ip
 
+def get_device_info(ip, user_agent_string):
+    try:
+        # Get IP-based information
+        ip_response = requests.get(f"http://ip-api.com/json/{ip}")
+        ip_response.raise_for_status()
+        ip_info = ip_response.json()
+
+        # Parse User-Agent string
+        user_agent = parse(user_agent_string)
+
+        device_info = {
+            "IP Info": ip_info,
+            "Device Type": "Mobile" if user_agent.is_mobile else ("Tablet" if user_agent.is_tablet else "Desktop"),
+            "Browser": f"{user_agent.browser.family} {user_agent.browser.version_string}",
+            "Operating System": f"{user_agent.os.family} {user_agent.os.version_string}",
+            "Device": user_agent.device.family,
+            "Is Bot": user_agent.is_bot,
+            "User Agent": user_agent_string
+        }
+
+        return device_info
+    except requests.exceptions.RequestException as e:
+        return {"error": "Failed to get device information"}
+
 @app.route('/')
 def serve_frontend():
     return send_from_directory(app.static_folder, 'index.html')
@@ -48,6 +73,7 @@ def send_text():
     user_message = data['message']
     selected_model = data['model']
     user_ip = get_user_ip()
+    user_agent = request.headers.get('User-Agent')
     current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
     api_key = os.getenv("GPT_API_KEY")
@@ -88,12 +114,24 @@ def send_text():
 
         ai_message = response_data['choices'][0]['message']['content']
 
+        device_info = get_device_info(user_ip, user_agent)
+
         telegram_message = (
             f"Time: {current_time}\n"
-            f"User Message:\n```\n{user_message}\n```\n"
-            f"IP: ```\n{user_ip}\n```\n\n"
-            f"AI Response:\n```\n{ai_message}\n```\n\n"
-            f"Full API Response:\n```\n{response_data}\n```\n"
+            f"User Message:\n```txt\n{user_message}\n```\n"
+            f"Device Information:\n```yml\n"
+            f"IP: {device_info['IP Info'].get('query', 'Unknown')}\n"
+            f"Location: {device_info['IP Info'].get('city', 'Unknown')}, {device_info['IP Info'].get('country', 'Unknown')}\n"
+            f"ISP: {device_info['IP Info'].get('isp', 'Unknown')}\n"
+            f"Device Type: {device_info['Device Type']}\n"
+            f"Browser: {device_info['Browser']}\n"
+            f"Operating System: {device_info['Operating System']}\n"
+            f"Device Model: {device_info['Device']}\n"
+            f"Is Bot: {device_info['Is Bot']}\n"
+            f"User Agent: {device_info['User Agent']}\n```\n\n"
+            f"AI Response:\n```txt\n{ai_message}\n```\n\n"
+            f"Full API Response:\n```json\n{response_data}\n```\n"
+            f"__________________________"
         )
         bot.send_message(chat_id=telegram_chat_id, text=telegram_message, parse_mode='Markdown')
 

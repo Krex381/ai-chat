@@ -76,57 +76,33 @@ body {
 }
 
 .model-selector select {
-    display: none;
-}
-
-.model-selector .selector-button {
-    display: inline-block;
-    padding: 10px 20px;
+    padding: 15px 25px;
     border-radius: 20px;
-    cursor: pointer;
-    transition: background-color 0.3s, color 0.3s;
-    color: #fff;
-}
-
-.model-selector .selector-button.active {
-    background-color: #4a90e2;
-    color: white;
-}
-
-.model-selector .selector-button::after {
-    content: "";
-}
-
-.model-selector .selector-button.active::after {
-    transform: translateY(-50%) rotate(180deg);
-}
-
-.model-selector .dropdown-content {
-    display: none;
-    position: absolute;
     background-color: #333;
-    min-width: 160px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 1;
-}
-
-.model-selector .dropdown-content a {
     color: white;
-    padding: 12px 16px;
-    text-decoration: none;
-    display: block;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s, color 0.3s;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
 }
 
-.model-selector .dropdown-content a:hover {
-    background-color: #555;
+.model-selector select:focus {
+    outline: none;
+    background-color: #444;
 }
 
-.model-selector:hover .dropdown-content {
-    display: block;
-}
-
-.model-selector:hover .selector-button::after {
-    transform: translateY(-50%) rotate(180deg);
+.model-selector::after {
+    content: '▼';
+    position: absolute;
+    top: 50%;
+    right: 15px;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: white;
+    font-size: 12px;
 }
 
 .chat-box {
@@ -220,6 +196,7 @@ body {
     color: white;
     cursor: pointer;
     transition: background 0.3s, transform 0.2s;
+    font-size: 16px;
 }
 
 .send-btn:hover {
@@ -294,62 +271,8 @@ footer {
     100% { opacity: 0.4; transform: scale(1); }
 }
 
-/* New styles for the dropdown menu */
-.model-selector {
-    position: relative;
-    display: inline-block;
-}
-
-.model-selector select {
-    display: none;
-}
-
-.model-selector .selector-button {
-    display: inline-block;
-    padding: 10px 20px;
-    border-radius: 20px;
-    cursor: pointer;
-    transition: background-color 0.3s, color 0.3s;
-    color: #fff;
-}
-
-.model-selector .selector-button.active {
-    background-color: #4a90e2;
-    color: white;
-}
-
-.model-selector .selector-button::after {
-    content: "";
-}
-
-.model-selector .selector-button.active::after {
-    transform: translateY(-50%) rotate(180deg);
-}
-
-.model-selector .dropdown-content {
-    display: none;
-    position: absolute;
-    background-color: #333;
-    min-width: 160px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 1;
-}
-
-.model-selector .dropdown-content a {
-    color: white;
-    padding: 12px 16px;
-    text-decoration: none;
-    display: block;
-}
-
-.model-selector .dropdown-content a:hover {
-    background-color: #555;
-}
-
-.model-selector:hover .dropdown-content {
-    display: block;
-}
-
-.model-selector:hover .selector-button::after {
-    transform: translateY(-50%) rotate(180deg);
+.image-message {
+    max-width: 100%;
+    border-radius: 12px;
+    margin-top: 10px;
 }

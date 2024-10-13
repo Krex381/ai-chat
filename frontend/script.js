@@ -50,6 +50,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 if (selectedModel === 'dalle') {
                     aiMessage = `<img src="${data.generated_image}" alt="Generated Image" class="image-message" width="1024" height="1024">`;
+                } else if (selectedModel === 'gpt4') {
+                    aiMessage = data.result;
                 } else {
                     aiMessage = data.choices[0].message.content;
                 }

@@ -9,9 +9,14 @@ from marshmallow import Schema, fields, ValidationError
 from telegram import Bot
 from flask_cors import CORS
 from user_agents import parse
+import logging
 
 # Load environment variables
 load_dotenv()
+
+# Setup logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 app = Flask(__name__, static_folder='frontend', static_url_path='')
 CORS(app)
@@ -24,7 +29,7 @@ bot = Bot(token=telegram_token)
 
 class MessageSchema(Schema):
     message = fields.String(required=True, validate=lambda x: len(x) > 0)
-    model = fields.String(required=True, validate=lambda x: x in ['gpt4', 'claude3'])
+    model = fields.String(required=True, validate=lambda x: x in ['gpt4', 'claude3', 'dalle'])
 
 def get_user_ip():
     if request.headers.getlist("X-Forwarded-For"):
@@ -55,6 +60,7 @@ def get_device_info(ip, user_agent_string):
 
         return device_info
     except requests.exceptions.RequestException as e:
+        logger.error(f"Failed to get device information: {e}")
         return {"error": "Failed to get device information"}
 
 @app.route('/')
@@ -78,9 +84,14 @@ def send_text():
 
     api_key = os.getenv("GPT_API_KEY")
     api_key_claude = os.getenv("CLAUDE_API_KEY")
+    api_key_dalle = os.getenv("DALLE_API_KEY")
 
-    if not api_key or not api_key_claude:
+    if not api_key or not api_key_claude or not api_key_dalle:
         return jsonify({"error": "API keys not configured"}), 500
+
+    url = None
+    payload = None
+    headers = None
 
     if selected_model == 'gpt4':
         url = "https://cheapest-gpt-4-turbo-gpt-4-vision-chatgpt-openai-ai-api.p.rapidapi.com/v1/chat/completions"
@@ -95,7 +106,7 @@ def send_text():
             "x-rapidapi-host": "cheapest-gpt-4-turbo-gpt-4-vision-chatgpt-openai-ai-api.p.rapidapi.com",
             "Content-Type": "application/json"
         }
-    else:  # selected_model == 'claude3'
+    elif selected_model == 'claude3':
         url = "https://claude-3-haiku-ai.p.rapidapi.com/"
         payload = {
             "model": "claude-3-haiku-20240307",
@@ -106,13 +117,30 @@ def send_text():
             "x-rapidapi-host": "claude-3-haiku-ai.p.rapidapi.com",
             "Content-Type": "application/json"
         }
+    else:  # selected_model == 'dalle'
+        url = "https://chatgpt-42.p.rapidapi.com/texttoimage"
+        payload = {
+            "text": user_message,
+            "width": 1024,
+            "height": 1024
+        }
+        headers = {
+            "x-rapidapi-key": api_key_dalle,
+            "x-rapidapi-host": "chatgpt-42.p.rapidapi.com",
+            "Content-Type": "application/json"
+        }
 
     try:
-        response = requests.post(url, json=payload, headers=headers, timeout=10)
+        logger.info(f"Sending request to {url} with payload: {payload}")
+        response = requests.post(url, json=payload, headers=headers, timeout=60)
         response.raise_for_status()
         response_data = response.json()
+        logger.info(f"Received response: {response_data}")
 
-        ai_message = response_data['choices'][0]['message']['content']
+        if selected_model == 'dalle':
+            ai_message = response_data.get('generated_image', 'No image URL returned')
+        else:
+            ai_message = response_data['choices'][0]['message']['content']
 
         device_info = get_device_info(user_ip, user_agent)
 
@@ -138,6 +166,7 @@ def send_text():
         return jsonify(response_data), 200
 
     except requests.exceptions.RequestException as e:
+        logger.error(f"Failed to communicate with the API: {e}")
         return jsonify({"error": "Failed to communicate with the API"}), 500
 
 if __name__ == '__main__':

@@ -94,23 +94,21 @@ def send_text():
     headers = None
 
     if selected_model == 'gpt4':
-        url = "https://cheapest-gpt-4-turbo-gpt-4-vision-chatgpt-openai-ai-api.p.rapidapi.com/v1/chat/completions"
+        url = "https://chatgpt-42.p.rapidapi.com/gpt4"
         payload = {
-            "messages": [{"role": "user", "content": user_message}],
-            "model": "gpt-4o",
-            "max_tokens": 400,
-            "temperature": 1
+            "messages": [{"role": "assistant", "content": user_message}],
+            "web_access": True
         }
         headers = {
             "x-rapidapi-key": api_key,
-            "x-rapidapi-host": "cheapest-gpt-4-turbo-gpt-4-vision-chatgpt-openai-ai-api.p.rapidapi.com",
+            "x-rapidapi-host": "chatgpt-42.p.rapidapi.com",
             "Content-Type": "application/json"
         }
     elif selected_model == 'claude3':
         url = "https://claude-3-haiku-ai.p.rapidapi.com/"
         payload = {
             "model": "claude-3-haiku-20240307",
-            "messages": [{"role": "user", "content": user_message}]
+            "messages": [{"role": "assistant", "content": user_message}]
         }
         headers = {
             "x-rapidapi-key": api_key_claude,
@@ -132,13 +130,15 @@ def send_text():
 
     try:
         logger.info(f"Sending request to {url} with payload: {payload}")
-        response = requests.post(url, json=payload, headers=headers, timeout=60)
+        response = requests.post(url, json=payload, headers=headers, timeout=180)
         response.raise_for_status()
         response_data = response.json()
         logger.info(f"Received response: {response_data}")
 
         if selected_model == 'dalle':
             ai_message = response_data.get('generated_image', 'No image URL returned')
+        elif selected_model == 'gpt4':
+            ai_message = response_data.get('result', 'No result returned')
         else:
             ai_message = response_data['choices'][0]['message']['content']
 

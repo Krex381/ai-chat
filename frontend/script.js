@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const chatInput = document.getElementById("chat-input");
     const sendBtn = document.getElementById("send-btn");
     const clearBtn = document.getElementById("clear-btn");
-    const modelSelectors = document.querySelectorAll(".selector-button");
+    const modelSelect = document.getElementById("model-select");
     let selectedModel = "gpt4"; // Default model
 
     const botTypingAnimation = `<div class="message bot"><img class="avatar" src="assets/bot-avatar.png"><div class="typing-indicator"><span></span><span></span><span></span></div></div>`;
@@ -46,11 +46,17 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
 
                 const data = await response.json();
-                const aiMessage = data.choices[0].message.content;
+                let aiMessage;
+
+                if (selectedModel === 'dalle') {
+                    aiMessage = `<img src="${data.generated_image}" alt="Generated Image" class="image-message" width="1024" height="1024">`;
+                } else {
+                    aiMessage = data.choices[0].message.content;
+                }
 
                 // Remove typing animation and display AI response
                 removeTypingIndicator();
-                addMessage(aiMessage, "bot");
+                addMessage(aiMessage, "bot", selectedModel === 'dalle');
             } catch (error) {
                 console.error('Fetch operation error:', error);
                 removeTypingIndicator();
@@ -68,7 +74,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
 
-    const addMessage = (text, sender) => {
+    const addMessage = (text, sender, isHtml = false) => {
         const messageElement = document.createElement("div");
         messageElement.classList.add("message", sender);
 
@@ -77,16 +83,25 @@ document.addEventListener("DOMContentLoaded", () => {
         avatar.src = sender === "user" ? "assets/user_avatar.png" : "assets/bot-avatar.png";
 
         const messageText = document.createElement("div");
-        messageText.innerHTML = text.replace(/\n/g, '<br>');
+        if (isHtml) {
+            messageText.innerHTML = text;
+        } else {
+            messageText.textContent = text;
+        }
 
         const copyIcon = document.createElement("img");
         copyIcon.src = "assets/copy_icon.png";
         copyIcon.classList.add("copy-icon");
         copyIcon.title = "Copy to clipboard";
         copyIcon.onclick = () => {
-            navigator.clipboard.writeText(text).then(() => {
-                showNotification("Text copied to clipboard!");
-            });
+            const contentToCopy = isHtml ? messageText.innerHTML : messageText.textContent;
+            const tempTextArea = document.createElement("textarea");
+            tempTextArea.value = contentToCopy;
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            document.execCommand("copy");
+            document.body.removeChild(tempTextArea);
+            showNotification("Text copied to clipboard!");
         };
 
         messageElement.appendChild(avatar);
@@ -128,12 +143,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 2000);
     };
 
-    modelSelectors.forEach(button => {
-        button.addEventListener("click", () => {
-            selectedModel = button.getAttribute("data-model");
-            showNotification(`AI model changed to ${selectedModel === 'gpt4' ? 'GPT-4' : 'Claude 3'}`);
-            modelSelectors.forEach(btn => btn.classList.remove("active"));
-            button.classList.add("active");
-        });
+    modelSelect.addEventListener("change", () => {
+        selectedModel = modelSelect.value;
+        showNotification(`AI model changed to ${selectedModel === 'gpt4' ? 'GPT-4' : selectedModel === 'claude3' ? 'Claude 3' : selectedModel === 'dalle' ? 'DALL-E' : 'Unknown Model'}`);
     });
 });

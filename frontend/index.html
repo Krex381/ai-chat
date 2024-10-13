@@ -15,8 +15,11 @@
     <div id="chat-container" class="chat-container hidden">
         <div class="chat-header">
             <div class="model-selector">
-                <div class="selector-button active" data-model="gpt4">GPT-4</div>
-                <div class="selector-button" data-model="claude3">Claude 3</div>
+                <select id="model-select" class="model-select">
+                    <option value="gpt4" selected>GPT-4</option>
+                    <option value="claude3">Claude 3</option>
+                    <option value="dalle">DALL-E</option>
+                </select>
             </div>
         </div>
 

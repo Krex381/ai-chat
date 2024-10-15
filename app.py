@@ -94,21 +94,21 @@ def send_text():
     headers = None
 
     if selected_model == 'gpt4':
-        url = "https://chatgpt-42.p.rapidapi.com/gpt4"
+        url = "https://chatgpt-vision1.p.rapidapi.com/gpt4"
         payload = {
-            "messages": [{"role": "assistant", "content": user_message}],
+            "messages": [{"role": "user", "content": user_message}],
             "web_access": True
         }
         headers = {
             "x-rapidapi-key": api_key,
-            "x-rapidapi-host": "chatgpt-42.p.rapidapi.com",
+            "x-rapidapi-host": "chatgpt-vision1.p.rapidapi.com",
             "Content-Type": "application/json"
         }
     elif selected_model == 'claude3':
         url = "https://claude-3-haiku-ai.p.rapidapi.com/"
         payload = {
             "model": "claude-3-haiku-20240307",
-            "messages": [{"role": "assistant", "content": user_message}]
+            "messages": [{"role": "user", "content": user_message}]
         }
         headers = {
             "x-rapidapi-key": api_key_claude,

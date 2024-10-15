@@ -68,7 +68,7 @@ def serve_frontend():
     return send_from_directory(app.static_folder, 'index.html')
 
 @app.route('/api/send_text', methods=['POST'])
-@limiter.limit("5 per minute")
+@limiter.limit("40 per minute")
 def send_text():
     schema = MessageSchema()
     try:

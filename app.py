@@ -116,9 +116,10 @@ def send_text():
             "Content-Type": "application/json"
         }
     else:  # selected_model == 'dalle'
-        url = "https://chatgpt-42.p.rapidapi.com/texttoimage"
+        url = "https://chatgpt-vision1.p.rapidapi.com/texttoimage"
         payload = {
             "text": user_message,
+            "negative_prompt" : "",
             "width": 1024,
             "height": 1024
         }

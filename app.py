@@ -125,7 +125,7 @@ def send_text():
         }
         headers = {
             "x-rapidapi-key": api_key_dalle,
-            "x-rapidapi-host": "chatgpt-42.p.rapidapi.com",
+            "x-rapidapi-host": "chatgpt-vision1.p.rapidapi.com",
             "Content-Type": "application/json"
         }
 

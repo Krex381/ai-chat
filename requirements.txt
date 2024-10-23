@@ -7,3 +7,4 @@ marshmallow==3.19.0
 python-telegram-bot==13.15
 gunicorn==23.0.0
 user-agents==2.2.0
+colorama==0.4.4

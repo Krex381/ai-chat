@@ -248,7 +248,7 @@ def process_ai_response(response_data, selected_model):
         if selected_model in ['claude3', 'gpt4', 'ai_gf']:
             if 'result' in response_data:
                 return Utils.format_response(response_data['result'])
-            if 'choices' in response_data:
+            if 'choices' in response_data and len(response_data['choices']) > 0:
                 return Utils.format_response(response_data['choices'][0]['message']['content'])
             
         logger.error(f"Unexpected response structure for {selected_model}: {response_data}")
@@ -257,6 +257,9 @@ def process_ai_response(response_data, selected_model):
     except KeyError as e:
         logger.error(f"Missing key in response: {e}")
         return f"Error: Missing key in response: {e}"
+    except Exception as e:
+        logger.error(f"Unexpected error: {str(e)}")
+        return f"Error: {str(e)}"
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 8080))

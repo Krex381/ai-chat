@@ -154,7 +154,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 return data.result || 'Error processing response.';
         }
     };
-
+    
     const formatResponse = (text) => {
         // Replace double newlines with <br><br>
         let formattedText = text.replace(/\n\n/g, "<br><br>");
@@ -184,8 +184,7 @@ document.addEventListener("DOMContentLoaded", () => {
         formattedText = formattedText.replace(/`([^`]+)`/g, '<code>$1</code>');
     
         return formattedText;
-    };
-    
+    };    
     
     const addMessage = (text, sender, isHtml = false) => {
         const messageElement = document.createElement("div");

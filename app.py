@@ -143,7 +143,6 @@ class Utils:
             logger.error(f"Failed to get device information: {e}")
             return {"error": "Failed to get device information"}
 
-class Utils:
     @staticmethod
     def format_response(text):
         """Format response text with proper code blocks, inline code, and other formatting"""
@@ -194,7 +193,7 @@ def get_rapidapi_key():
 
 @app.route('/api/send_text', methods=['POST'])
 @limiter.limit("5 per minute")
-async def send_text():
+def send_text():
     try:
         data = MessageSchema().load(request.json)
         user_message = data['message']
@@ -226,7 +225,7 @@ async def send_text():
         response_data = response.json()
 
         ai_message = process_ai_response(response_data, selected_model)
-        return jsonify(response_data), 200
+        return jsonify({"message": ai_message}), 200
 
     except ValidationError as err:
         logger.error(f"Validation error: {err.messages}")

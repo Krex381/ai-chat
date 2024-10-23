@@ -204,7 +204,7 @@ def send_text():
         if not config:
             return jsonify({"error": "Invalid model selected"}), 400
 
-        api_key = os.getenv("API_KEY")
+        api_key = os.getenv("RAPIDAPI_KEY")
         if not api_key:
             return jsonify({"error": "API key not configured"}), 500
 

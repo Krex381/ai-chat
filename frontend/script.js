@@ -144,11 +144,11 @@ document.addEventListener("DOMContentLoaded", () => {
             case 'dalle':
                 return `<img src="${data.generated_image || ''}" width="${elements.dalleWidth.value || state.settings.dalle.width}" height="${elements.dalleHeight.value || state.settings.dalle.height}" alt="Generated Image"  />` || 'No image returned.';
             case 'vision':
-                return data.result || 'No result returned.';
+                return data.message || 'No result returned.';
             case 'claude3':
                 return data?.choices?.[0]?.message?.content || 'Unexpected response for Claude-3.';
             case 'ai_gf':
-                return data.result || 'No result returned.';
+                return data.message || 'No result returned.';
             case 'gpt4':
             default:
                 return data.message || 'Error processing response.';

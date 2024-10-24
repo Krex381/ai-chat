@@ -151,7 +151,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 return data.result || 'No result returned.';
             case 'gpt4':
             default:
-                return data.result || 'Error processing response.';
+                return data.message || 'Error processing response.';
         }
     };
     

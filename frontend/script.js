@@ -139,21 +139,26 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
 
-    const processAIResponse = (data, model) => {
-        switch (model) {
-            case 'dalle':
-                return `<img src="${data.generated_image || ''}" width="${elements.dalleWidth.value || state.settings.dalle.width}" height="${elements.dalleHeight.value || state.settings.dalle.height}" alt="Generated Image"  />` || 'No image returned.';
-            case 'vision':
-                return data.message || 'No result returned.';
-            case 'claude3':
-                return data?.choices?.[0]?.message?.content || 'Unexpected response for Claude-3.';
-            case 'ai_gf':
-                return data.message || 'No result returned.';
-            case 'gpt4':
-            default:
-                return data.message || 'Error processing response.';
-        }
-    };
+const processAIResponse = (data, model) => {
+    let responseMessage;
+    switch (model) {
+        case 'dalle':
+            responseMessage = `<img src="${data.generated_image || ''}" width="${elements.dalleWidth.value || state.settings.dalle.width}" height="${elements.dalleHeight.value || state.settings.dalle.height}" alt="Generated Image"  />` || 'No image returned.';
+            break;
+        case 'vision':
+        case 'ai_gf':
+            responseMessage = data.message || 'No result returned.';
+            break;
+        case 'claude3':
+            responseMessage = data?.choices?.[0]?.message?.content || 'Unexpected response for Claude-3.';
+            break;
+        case 'gpt4':
+        default:
+            responseMessage = data.message || 'Error processing response.';
+            break;
+    }
+    return { message: responseMessage };
+};
     
     const formatResponse = (text) => {
         // Replace double newlines with <br><br>

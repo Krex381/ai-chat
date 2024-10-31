@@ -1,4 +1,5 @@
-Flask==2.3.2
+Flask[async]==2.3.2
+asgiref>=3.2
 Flask-Limiter==3.3.1
 Flask-CORS==4.0.0
 python-dotenv==1.0.0

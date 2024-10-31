@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UncensoredAI</title>
+    <title>UncensoredAI Chat</title>
     <link rel="stylesheet" href="style.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
-    <!-- MathJax Script for LaTeX Rendering -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js" defer></script>
     <script type="text/javascript" id="MathJax-script" async
       src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
@@ -73,8 +72,10 @@
                 <input type="number" id="dalle-height" min="256" max="1024" step="64" value="512">
                 <label for="dalle-width">Width:</label>
                 <input type="number" id="dalle-width" min="256" max="1024" step="64" value="512">
-                <!-- <label for="dalle-negative-prompt">Negative Prompt:</label>
-                <input type="text" id="dalle-negative-prompt"> -->
+                <div class="input-group">
+                    <input type="text" id="dalle-negative" placeholder="">
+                    <label for="dalle-negative">Negative Prompt</label>
+                </div>
             </div>
             <div id="settings-vision" class="settings-section hidden">
                 <label class="switch-label">
@@ -89,7 +90,14 @@
     </div>
 
     <div id="notification" class="notification hidden">
-        <div class="notification-content"></div>
+        <div class="notification-content">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+            <span class="notification-message"></span>
+        </div>
     </div>
 
     <footer class="page-footer">
@@ -98,6 +106,6 @@
         <p>Users are responsible for their actions and must act professionally. The platform creators are not liable for misuse.</p>
     </footer>
 
-    <script src="script.js"></script>
+    <script src="script.js" defer></script>
 </body>
 </html>

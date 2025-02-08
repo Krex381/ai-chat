@@ -35,9 +35,9 @@ A sophisticated chat application that leverages multiple AI models through Rapid
 1. Visit [RapidAPI](https://rapidapi.com/)
 2. Create an account or sign in
 3. Subscribe to the following APIs:
-   - [ChatGPT Vision API](https://rapidapi.com/ajayakv/api/chatgpt-vision1/) for GPT-4, DALL-E, and Vision
-   - [Claude-3 Sonnet API](https://rapidapi.com/ebryx-ebryx-default/api/claude-3-5-sonnet/) for Claude
-   - [OpenAI21 API](https://rapidapi.com/fareedkhan557/api/open-ai21/) for AI Girlfriend
+   - [ChatGPT Vision API](https://rapidapi.com/rphrp1985/api/chatgpt-vision1) for GPT-4, DALL-E, and Vision
+   - [Claude-3 Sonnet API](https://rapidapi.com/swift-api-swift-api-default/api/claude-3-5-sonnet) for Claude
+   - [OpenAI21 API](https://rapidapi.com/rphrp1985/api/custom-chatbot-api) for AI Girlfriend
 
 ### Installation
 

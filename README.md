@@ -43,7 +43,7 @@ A sophisticated chat application that leverages multiple AI models through Rapid
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/ai-chat.git
+git clone https://github.com/Krex381/ai-chat.git
 cd ai-chat
 ```
 
